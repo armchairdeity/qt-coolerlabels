@@ -1,0 +1,5 @@
+barcodes
+barcodes/**
+__pycache__
+.DS_Store
+*.pdf
