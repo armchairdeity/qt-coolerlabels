@@ -5,7 +5,7 @@ Copyright (c) 2023 Amazon
 
 This module contains helper functions used in the label generation
 process. It handles reading product data from Excel files, generating
-individual barcode images, setting label dimensions, and drawing 
+individual barcode images, setting label dimensions, and drawing
 barcodes onto labels.
 
 These functions are imported and used by the labelizer.py module,
@@ -13,11 +13,11 @@ which contains the main logic for generating labels from product data.
 
 Functions:
   - getProductDatafile(): Reads product data from an Excel file
-  - generateBarcodes(): Creates barcode images from product data  
+  - generateBarcodes(): Creates barcode images from product data
   - getSize(): Converts dimensions between inches and mm
   - drawLabel(): Draws a barcode image onto a label
 
-This source code is provided under an MIT license. See 
+This source code is provided under an MIT license. See
 LICENSE file for more details.
 """
 import barcode
@@ -32,7 +32,7 @@ def getProductDatafile(fileName: str) -> list:
 		retVal = [r.split("\t") for r in pd.read_excel(fileName, header=None, usecols=[0, 1, 2], dtype="string", names=["PrintCount", "UPC", "Name"]).to_csv(sep="\t", index=False, header=False).split("\n")]
 		print(*retVal)
 		return retVal
-	
+
 # callback for the Sheet(), applies an Image to the label
 def drawLabel(label:shapes.Drawing, width:int, height:int, obj:str):
 	img = shapes.Image(x=20, y=0, width=width-60, height=height, path=str(obj))
@@ -42,15 +42,15 @@ def drawLabel(label:shapes.Drawing, width:int, height:int, obj:str):
 def clearFiles_csv(folderPath):
 	[os.remove(csv) for csv in os.listdir(folderPath) if os.path.splitext(csv) == ".csv"]
 
-# Generate the barcode images 1 at a time, looping over the list that 
+# Generate the barcode images 1 at a time, looping over the list that
 # gets returned from a call to getProductData()
 def generateBarcodes(prodData: list):
 
 	print("Generating bar codes!\n\n")
 	for a in prodData:
-		
+
 		print(*a,end="\n", sep=" : ")
-		
+
 		# break out of the loop if the list item has less than the 3 expected elements
 		# this can happen sometimes on the last iteration of the loop if your lines
 		# are pulled from a data file that ends in a newline, yanno, like MOST of them. ;)
@@ -78,11 +78,11 @@ def generateBarcodes(prodData: list):
 				# now reassemble the string by doing a join() call against an empty string, thus retaining the original
 				# letters and spaces, as well as the new newline character
 				a[2]="".join(chars)
-			
+
 			# now generate the bar code
 			barcode.generate('upc', a[1], ImageWriter(), f"./barcodes/{a[1]}", text=f"{a[2]}", writer_options=imageWriterOpts)
 
-			# now reset the newline in the product name to a space so that it doesn't mess up thee output of the 
+			# now reset the newline in the product name to a space so that it doesn't mess up thee output of the
 			# pdf generation process.
 			a[2].replace("\n"," ")
 
