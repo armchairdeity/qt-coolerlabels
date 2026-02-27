@@ -51,6 +51,20 @@ from funcs import generateBarcodes
 from funcs import getSize
 from funcs import drawLabel
 
+REQUIRED_DIRS = ("./prod_docs", "./barcodes", "./finished")
+
+
+def ensure_directories(paths):
+    for path in paths:
+        if os.path.exists(path) and not os.path.isdir(path):
+            raise NotADirectoryError(f"Path exists but is not a directory: {path}")
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+            print(f"Created missing directory: {path}")
+
+
+ensure_directories(REQUIRED_DIRS)
+
 # clean up leftover files from previous runs
 if os.path.exists("./barcodes"):
     for png in glob.glob("./barcodes/*.png"):
